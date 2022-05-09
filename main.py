@@ -3,6 +3,7 @@ from discord.ext import commands, tasks
 import re
 import datetime
 import requests
+import config_token
 
 bot = commands.Bot("!")
 
@@ -71,6 +72,6 @@ async def current_time():
 
     await channel.send("Data atual: " + now)
 
-bot.run("OTY5NDExNzM5ODY5Mzg4ODMw.YmtBCQ.btyP2NVcjyRM-QG82MFs8gBOlXY")
+bot.run(config_token.retornar_token())
 
 
