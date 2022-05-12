@@ -1,9 +1,12 @@
+from pydoc import describe
 import discord
 from discord.ext import commands, tasks
 import re
 import datetime
 import requests
 import config_token
+from discord.ext.commands import CommandNotFound
+import roles
 
 bot = commands.Bot("!")
 
@@ -58,11 +61,16 @@ async def on_message(message):
 async def secret(ctx):
     await ctx.author.send("hehe, muito bom garotinho.")
 
-@bot.command(name=" ")
+@bot.command(name="oi")
 async def send_hello(ctx):
     user = ctx.author
     response = f'oi {user.mention}'
     await ctx.send(response)
+
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, CommandNotFound):
+        await ctx.send(f"Comando {ctx.message.content} não encontrado :(")
 
 @tasks.loop(seconds=100)
 async def current_time():
@@ -71,6 +79,33 @@ async def current_time():
     channel = bot.get_channel(971700495808876545)
 
     await channel.send("Data atual: " + now)
+
+@bot.event
+async def on_reaction_add(reaction, user):
+    if reaction.emoji == "👍":
+        role = user.guild.get_role(roles.CARGO_ULTRA_SECRETO)
+        await user.add_roles(role)
+
+@bot.command(name="foto")
+async def get_random_image(ctx):
+    url_image = "https://picsum.photos/1920/1080"
+
+    embed_image = discord.Embed(
+        title = "Imagem aleatória:",
+        description = "Exemplo de uso imagem aleatoria gostosinha",
+        color = 0x2eff00,
+    )
+
+    embed_image.set_author(name=bot.user.name, icon_url=bot.user.avatar_url)
+    embed_image.set_footer(text=f"Feito por:{bot.user.name}", icon_url=bot.user.avatar_url)
+
+    embed_image.add_field(name="API", value="Usando api do https://picsum.photos")
+    embed_image.add_field(name="Parâmetros", value="{largura}/{altura}")
+    embed_image.add_field(name="Exemplo", value=url_image, inline=False)
+
+    embed_image.set_image(url = url_image)
+
+    await ctx.send(embed=embed_image)
 
 bot.run(config_token.retornar_token())
 
