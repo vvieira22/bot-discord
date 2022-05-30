@@ -1,7 +1,10 @@
+from re import A
 from discord.ext import commands, tasks
 from discord.ext.commands.errors import MissingRequiredArgument, CommandNotFound
 import datetime
 import discord
+import tools
+import main
 
 # Cog subclasse de comandos
 
@@ -19,7 +22,12 @@ class Manager(commands.Cog):
         if isinstance(error, MissingRequiredArgument):
             await ctx.send("Você precisa enviar todos argumentos.\nDigite !help {comando} para ver os argumentos de cada comando.!")
         elif isinstance(error, CommandNotFound):
-            await ctx.send("Comando " + '{'+ctx.message.content+'}' + " encontrado :(\nDigite !help {comando} para ver todos os comandos !")
+            probabily_command = tools.word_check(str(ctx.message.content), main.LISTA_COMANDOS)
+
+            if(probabily_command == ""):
+                await ctx.send("Comando " + '***'+ctx.message.content[1:]+'***' + " não encontrado :(\nDigite !help {comando} para ver todos os comandos !")
+            else:
+                await ctx.send("Comando " + '*'+ctx.message.content[1:] + '*' + " não encontrado\nVocê quis dizer " + "**" + probabily_command + "**" + " ?")
         else:
             raise error
 
