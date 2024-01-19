@@ -1,2 +1,2 @@
 # bot-discord
-Discord Bot without python3
+Discord Bot with python3
